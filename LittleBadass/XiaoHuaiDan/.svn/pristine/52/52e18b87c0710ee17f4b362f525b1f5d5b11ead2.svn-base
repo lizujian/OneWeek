@@ -1,0 +1,610 @@
+//
+//  PersonalInfoViewController.m
+//  XiaoHuaiDan
+//
+//  Created by TCL on 14-6-24.
+//  Copyright (c) 2014年 sch. All rights reserved.
+//
+
+#import "PersonalInfoViewController.h"
+#import "MainViewController.h"
+#import "ContentViewController.h"
+#import "DottedLine.h"
+#import "CollectedSectionViewController.h"
+#import "AttentionViewController.h"
+#import "FansViewController.h"
+#import "FotoWallViewController.h"
+#import "PostFocus.h"
+#import "PersonalPostViewController.h"
+#import "PostViewController.h"
+#import "FansViewController.h"
+#import "AttentionViewController.h"
+
+
+@interface PersonalInfoViewController ()
+
+@end
+
+@implementation PersonalInfoViewController
+@synthesize sv,svImg,pc,svImgCurrentPage,scrollLeftOrRight,userId,starIndex,starName,dic,pNameLbl,fNumLbl,per,userName,imageUrl,sexIndex,contentTxt,race,isFromPost,whereFrom,usrPortrait,petPortrait,breed;
+
+- (id)initWithNibName:(NSString *)nibNameOrNil bundle:(NSBundle *)nibBundleOrNil
+{
+    self = [super initWithNibName:nibNameOrNil bundle:nibBundleOrNil];
+    if (self) {
+        // Custom initialization
+    }
+    return self;
+}
+
+-(void)viewWillAppear:(BOOL)animated
+{
+    GetUserData *gud = [[GetUserData alloc] init];
+    [gud getUserData:self.userId :self];
+    [gud release];
+}
+
+- (void)viewDidLoad
+{
+    [super viewDidLoad];
+    // Do any additional setup after loading the view.
+    
+    self.per = [[PersonalInfoView alloc] initWithFrame:CGRectMake(0, 0, VIEW_FRAME_WIDTH, VIEW_FRAME_HEIGHT)];
+    per.dic = [NSMutableDictionary dictionaryWithCapacity:0];
+    per.userId = self.userId;
+    
+    
+    [self.view addSubview:per];
+    [per autorelease];
+    
+    
+    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(goToFansSection:) name:@"GOFAN" object:nil];
+    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(goToAttentionSection:) name:@"GOATT" object:nil];
+    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(goToFotoWall:) name:@"GOFOT" object:nil];
+    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(goToCollectedSection:) name:@"GOCOL" object:nil];
+    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(backToCon:) name:@"GOCON" object:nil];
+    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(goToPos:) name:@"GOPOS" object:nil];
+    
+//    GetUserData *gud = [[GetUserData alloc] init];
+//    NSLog(@"--------------------%d",self.userId);
+//    [gud getUserData:self.userId];
+//    [gud release];
+    
+//    [self.view setBackgroundColor:[UIColor colorWithRed:246.0/255.0 green:246.0/255.0 blue:246.0/255.0 alpha:1.0]];
+//    
+//    UIView *barView = [[UIView alloc] initWithFrame:CGRectMake(0, 0, VIEW_FRAME_WIDTH, 128.0/1136.0*VIEW_FRAME_HEIGHT)];
+//    [barView setBackgroundColor:[UIColor colorWithRed:255.0/255.0 green:83.0/255.0 blue:99.0/255.0 alpha:1.0]];
+//    [self.view addSubview:barView];
+//    
+////    self.dic = [NSMutableDictionary dictionaryWithDictionary:gud.dataDic];
+//
+//    UITextField *titleText = [[UITextField alloc] initWithFrame:CGRectMake(224.0/640.0*VIEW_FRAME_WIDTH, 65.0/1136.0*VIEW_FRAME_HEIGHT, 180.0/640.0*VIEW_FRAME_WIDTH, 39.0/1136.0*VIEW_FRAME_HEIGHT)];
+//    titleText.text = @"Moko窝";
+//    titleText.textColor = [UIColor whiteColor];
+//    [titleText setFont:[UIFont fontWithName:@"Arial" size:17.0]];
+//    titleText.textAlignment = NSTextAlignmentCenter;
+//    [titleText setEnabled:NO];
+//    [barView addSubview:titleText];
+//    
+//    UIButton *backBtn = [UIButton buttonWithType:UIButtonTypeSystem];
+//    backBtn.frame = CGRectMake(29.0/640.0*320.0, 53.0/1136.0*568.0, 63.0/640.0*320.0, 61.0/1136.0*568.0);
+//    [backBtn setBackgroundImage:[UIImage imageNamed:@"reply_icon.png"] forState:UIControlStateNormal];
+//    [backBtn addTarget:self action:@selector(backToCon:) forControlEvents:UIControlEventTouchUpInside];
+//    [barView addSubview:backBtn];
+//    
+//    UIButton *attBtn = [UIButton buttonWithType:UIButtonTypeSystem];
+//    attBtn.frame = CGRectMake(548.0/640.0*VIEW_FRAME_WIDTH, 53.0/1136.0*VIEW_FRAME_HEIGHT, 63.0/640.0*VIEW_FRAME_WIDTH, 64.0/1136.0*VIEW_FRAME_HEIGHT);
+//    [attBtn setBackgroundImage:[UIImage imageNamed:@"preview_icon.png"] forState:UIControlStateNormal];
+//    [attBtn addTarget:self action:@selector(focus:) forControlEvents:UIControlEventTouchUpInside];
+//    [barView addSubview:attBtn];
+//    
+//    [barView release];
+//    [titleText release];
+//    
+//    UIImageView *background = [[UIImageView alloc] initWithFrame:CGRectMake( 0.0/640.0*VIEW_FRAME_WIDTH, 128.0/1136.0*VIEW_FRAME_HEIGHT, 640.0/640.0*VIEW_FRAME_WIDTH, 540.0/1136.0*VIEW_FRAME_HEIGHT)];
+//    [background setBackgroundColor:[UIColor blackColor]];
+//    [background setUserInteractionEnabled:YES];
+//    [self.view addSubview:background];
+//    
+//    UIImageView *headImg = [[UIImageView alloc] initWithFrame:CGRectMake( 224.0/640.0*VIEW_FRAME_WIDTH, 165.0/1136.0*VIEW_FRAME_HEIGHT-128.0/1136.0*VIEW_FRAME_HEIGHT, 180.0/640.0*VIEW_FRAME_WIDTH, 180.0/1136.0*VIEW_FRAME_HEIGHT)];
+//    [headImg setBackgroundColor:[UIColor grayColor]];
+//    headImg.layer.cornerRadius = headImg.bounds.size.width/2;
+//    [headImg.layer setBorderWidth:2];
+//    [headImg.layer setBorderColor:[[UIColor whiteColor] CGColor]];
+//    [background addSubview:headImg];
+//    
+//    UITextField *nameText = [[UITextField alloc] initWithFrame:CGRectMake(274.0/640.0*VIEW_FRAME_WIDTH, 364.0/1136.0*VIEW_FRAME_HEIGHT-128.0/1136.0*VIEW_FRAME_HEIGHT, 93.0/640.0*VIEW_FRAME_WIDTH, 35.0/1136.0*VIEW_FRAME_HEIGHT)];
+//    nameText.text = @"Mini";
+//    nameText.textColor = [UIColor colorWithRed:118.0/255.0 green:196.0/255.0 blue:255.0/255.0 alpha:1.0];
+//    [nameText setFont:[UIFont fontWithName:@"Arial" size:24.0]];
+//    [nameText setEnabled:NO];
+//    [background addSubview:nameText];
+//
+//    UIImageView *sexImg = [[UIImageView alloc] initWithFrame:CGRectMake( 225.0/640.0*VIEW_FRAME_WIDTH, 407.0/1136.0*VIEW_FRAME_HEIGHT-128.0/1136.0*VIEW_FRAME_HEIGHT, 18.0/640.0*VIEW_FRAME_WIDTH, 24.0/1136.0*VIEW_FRAME_HEIGHT)];
+//    [sexImg setImage:[UIImage imageNamed:@"girl_02.png"]];
+//    [background addSubview:sexImg];
+//    
+//    UILabel *sexLbl = [[UILabel alloc] initWithFrame:CGRectMake( 245.0/640.0*VIEW_FRAME_WIDTH, 407.0/1136.0*VIEW_FRAME_HEIGHT-128.0/1136.0*VIEW_FRAME_HEIGHT, 74.0/640.0*VIEW_FRAME_WIDTH, 24.0/1136.0*VIEW_FRAME_HEIGHT)];
+//    sexLbl.text = @"妹子";
+//    sexLbl.font = [UIFont fontWithName:@"Arial-BoldItalicMT" size:14.0];
+//    sexLbl.textColor = [UIColor whiteColor];
+//    [background addSubview:sexLbl];
+//    
+//    UIImageView *locImg = [[UIImageView alloc] initWithFrame:CGRectMake( 334.0/640.0*VIEW_FRAME_WIDTH, 406.0/1136.0*VIEW_FRAME_HEIGHT-128.0/1136.0*VIEW_FRAME_HEIGHT, 22.0/640.0*VIEW_FRAME_WIDTH, 26.0/1136.0*VIEW_FRAME_HEIGHT)];
+//    [locImg setImage:[UIImage imageNamed:@"pin.png"]];
+//    [background addSubview:locImg];
+//
+//    UILabel *locLbl = [[UILabel alloc] initWithFrame:CGRectMake( 358.0/640.0*VIEW_FRAME_WIDTH, 407.0/1136.0*VIEW_FRAME_HEIGHT-128.0/1136.0*VIEW_FRAME_HEIGHT, 74.0/640.0*VIEW_FRAME_WIDTH, 24.0/1136.0*VIEW_FRAME_HEIGHT)];
+//    locLbl.text = @"深圳";
+//    locLbl.font = [UIFont fontWithName:@"Arial-BoldItalicMT" size:14.0];
+//    locLbl.textColor = [UIColor whiteColor];
+//    [background addSubview:locLbl];
+//    
+//    [headImg release];
+//    [nameText release];
+//    [sexImg release];
+//    [sexLbl release];
+//    [locImg release];
+//    [locLbl release];
+//    
+//    self.sv = [[UIScrollView alloc] initWithFrame:CGRectMake( 0.0/640.0*VIEW_FRAME_WIDTH, 470.0/1136.0*VIEW_FRAME_HEIGHT-128.0/1136.0*VIEW_FRAME_HEIGHT, VIEW_FRAME_WIDTH, 170.0/1136.0*VIEW_FRAME_HEIGHT)];
+//    sv.delegate = self;
+//    sv.showsHorizontalScrollIndicator = NO;
+//    sv.contentSize = CGSizeMake(VIEW_FRAME_WIDTH*[[self.dic objectForKey:@"pets"] count], 170.0/1136.0*VIEW_FRAME_HEIGHT); //3改成[arry count]
+//    sv.tag = 10;
+//    sv.pagingEnabled = NO;
+//    sv.bounces = NO;
+//    sv.contentOffset = CGPointMake(344.0/640.0*VIEW_FRAME_WIDTH, 0);
+//    [background addSubview:sv];
+//    
+//    for (int i = 0; i < [[self.dic objectForKey:@"pets"] count]; i++) {
+//        UIImageView *petInfoImg = [[UIImageView alloc] initWithFrame:CGRectMake(364.0/640.0*VIEW_FRAME_WIDTH*i, 0, 344.0/640.0*VIEW_FRAME_WIDTH, 170.0/1136.0*VIEW_FRAME_HEIGHT)];
+//        [petInfoImg setImage:[UIImage imageNamed:@"stamp_type.png"]];
+//        [self.sv addSubview:petInfoImg];
+//        
+//        UIImageView *petImg = [[UIImageView alloc] initWithFrame:CGRectMake( 32.0/640.0*VIEW_FRAME_WIDTH, 26.0/1136.0*VIEW_FRAME_HEIGHT, 116.0/640.0*VIEW_FRAME_WIDTH, 116.0/1136.0*VIEW_FRAME_HEIGHT)];
+//        [petImg setBackgroundColor:[UIColor whiteColor]];
+//        petImg.layer.cornerRadius = petImg.bounds.size.width/2;
+//        [petImg.layer setBorderWidth:2];
+//        [petImg.layer setBorderColor:[[UIColor grayColor] CGColor]];
+//        [petInfoImg addSubview:petImg];
+//        
+//        self.pNameLbl = [[UILabel alloc] initWithFrame:CGRectMake( 157.0/640.0*VIEW_FRAME_WIDTH, 37.0/1136.0*VIEW_FRAME_HEIGHT, 60.0/640.0*VIEW_FRAME_WIDTH, 26.0/1136.0*VIEW_FRAME_HEIGHT)];
+//        pNameLbl.text = [[[self.dic objectForKey:@"pets"] objectAtIndex:i] objectForKey:@"name"];
+//        pNameLbl.font = [UIFont fontWithName:@"Arial-BoldItalicMT" size:14.0];
+//        pNameLbl.textColor = [UIColor colorWithRed:118.0/255.0 green:196.0/255.0 blue:255.0/255.0 alpha:1.0];
+//        [petInfoImg addSubview:pNameLbl];
+//        
+//        UILabel *pVarietiesLbl = [[UILabel alloc] initWithFrame:CGRectMake( 160.0/640.0*VIEW_FRAME_WIDTH, 77.0/1136.0*VIEW_FRAME_HEIGHT, 48.0/640.0*VIEW_FRAME_WIDTH, 26.0/1136.0*VIEW_FRAME_HEIGHT)];
+//        pVarietiesLbl.text = [[[self.dic objectForKey:@"pets"] objectAtIndex:i] objectForKey:@"breed"];
+//        pVarietiesLbl.font = [UIFont fontWithName:@"Arial" size:12.0];
+//        pVarietiesLbl.textColor = [UIColor colorWithRed:140.0/255.0 green:140.0/255.0 blue:140.0/255.0 alpha:1.0];
+//        [petInfoImg addSubview:pVarietiesLbl];
+//        
+//        UILabel *birthLbl = [[UILabel alloc] initWithFrame:CGRectMake( 158.0/640.0*VIEW_FRAME_WIDTH, 111.0/1136.0*VIEW_FRAME_HEIGHT, 120.0/640.0*VIEW_FRAME_WIDTH, 20.0/1136.0*VIEW_FRAME_HEIGHT)];
+//        birthLbl.text = [[[self.dic objectForKey:@"pets"] objectAtIndex:i] objectForKey:@"birthday"];
+//        birthLbl.font = [UIFont fontWithName:@"Arial" size:12.0];
+//        birthLbl.textColor = [UIColor colorWithRed:140.0/255.0 green:140.0/255.0 blue:140.0/255.0 alpha:1.0];
+//        [petInfoImg addSubview:birthLbl];
+//        
+//        UIImageView *postImg = [[UIImageView alloc] initWithFrame:CGRectMake( 252.0/640.0*VIEW_FRAME_WIDTH, 98.0/1136.0*VIEW_FRAME_HEIGHT, 94.0/640.0*VIEW_FRAME_WIDTH, 66.0/1136.0*VIEW_FRAME_HEIGHT)];
+//        [postImg setImage:[UIImage imageNamed:@"postmark.png"]];
+//        [petInfoImg addSubview:postImg];
+//        
+//        [petInfoImg release];
+//        [petImg release];
+//        [pNameLbl release];
+//        [pVarietiesLbl release];
+//        [birthLbl release];
+//        [postImg release];
+//    }
+//    
+//    [background release];
+//    
+//    UIView *statusView = [[UIView alloc] initWithFrame:CGRectMake( 0.0/640.0*VIEW_FRAME_WIDTH, 702.0/1136.0*VIEW_FRAME_HEIGHT, 640.0/640.0*VIEW_FRAME_WIDTH, 160.0/1136.0*VIEW_FRAME_HEIGHT)];
+//    [statusView setBackgroundColor:[UIColor whiteColor]];
+//    [statusView setUserInteractionEnabled:YES];
+//    [self.view addSubview:statusView];
+//    
+//    for (int j = 0; j<4; j++) {
+//        UIImageView *sepImg = [[UIImageView alloc] initWithFrame:CGRectMake( 127.0/640.0*VIEW_FRAME_WIDTH+128.0/640.0*VIEW_FRAME_WIDTH*j, 17.0/1136.0*VIEW_FRAME_HEIGHT, 1.0/640.0*VIEW_FRAME_WIDTH, 126.0/1136.0*VIEW_FRAME_HEIGHT)];
+//        [sepImg setBackgroundColor:[UIColor colorWithRed:200.0/255.0 green:200.0/255.0 blue:200.0/255.0 alpha:1.0]];
+//        [statusView addSubview:sepImg];
+//        
+//        [sepImg release];
+//    }
+//    
+//    UIButton *fansBtn = [UIButton buttonWithType:UIButtonTypeSystem];
+//    fansBtn.frame = CGRectMake( 42.0/640.0*VIEW_FRAME_WIDTH, 17.0/1136.0*VIEW_FRAME_HEIGHT, 44.0/640.0*VIEW_FRAME_WIDTH, 40.0/1136.0*VIEW_FRAME_HEIGHT);
+//    [fansBtn setBackgroundImage:[UIImage imageNamed:@"fans.png"] forState:UIControlStateNormal];
+//    [fansBtn addTarget:self action:@selector(goToFansSection:) forControlEvents:UIControlEventTouchUpInside];
+//    [statusView addSubview:fansBtn];
+//
+//    
+//    UILabel *fansLbl = [[UILabel alloc] initWithFrame:CGRectMake( 39.0/640.0*VIEW_FRAME_WIDTH, 75.0/1136.0*VIEW_FRAME_HEIGHT, 50.0/640.0*VIEW_FRAME_WIDTH, 24.0/1136.0*VIEW_FRAME_HEIGHT)];
+//    fansLbl.text = @"粉丝";
+//    fansLbl.font = [UIFont fontWithName:@"Arial-BoldItalicMT" size:12.0];
+//    fansLbl.textColor = [UIColor colorWithRed:140.0/255.0 green:140.0/255.0 blue:140.0/255.0 alpha:1.0];
+//    fansLbl.textAlignment = NSTextAlignmentCenter;
+//    [statusView addSubview:fansLbl];
+//    
+//    self.fNumLbl = [[UILabel alloc] initWithFrame:CGRectMake( 50.0/640.0*VIEW_FRAME_WIDTH, 122.0/1136.0*VIEW_FRAME_HEIGHT, 28.0/640.0*VIEW_FRAME_WIDTH, 19.0/1136.0*VIEW_FRAME_HEIGHT)];
+////    fNumLbl.text = [self.dic objectForKey:@"fans"];
+//    fNumLbl.font = [UIFont fontWithName:@"Arial-BoldItalicMT" size:12.0];
+//    fNumLbl.textColor = [UIColor blackColor];
+//    fNumLbl.textAlignment = NSTextAlignmentCenter;
+//    [statusView addSubview:fNumLbl];
+//    
+//    [fansLbl release];
+//    [fNumLbl release];
+//    
+//    UIButton *atteBtn = [UIButton buttonWithType:UIButtonTypeSystem];
+//    atteBtn.frame = CGRectMake( 167.0/640.0*VIEW_FRAME_WIDTH, 21.0/1136.0*VIEW_FRAME_HEIGHT, 48.0/640.0*VIEW_FRAME_WIDTH, 30.0/1136.0*VIEW_FRAME_HEIGHT);
+//    [atteBtn setBackgroundImage:[UIImage imageNamed:@"attention.png"] forState:UIControlStateNormal];
+//    [atteBtn addTarget:self action:@selector(goToAttentionSection:) forControlEvents:UIControlEventTouchUpInside];
+//    [statusView addSubview:atteBtn];
+//    
+//    UILabel *attLbl = [[UILabel alloc] initWithFrame:CGRectMake( 167.0/640.0*VIEW_FRAME_WIDTH, 75.0/1136.0*VIEW_FRAME_HEIGHT, 50.0/640.0*VIEW_FRAME_WIDTH, 24.0/1136.0*VIEW_FRAME_HEIGHT)];
+//    attLbl.text = @"关注";
+//    attLbl.font = [UIFont fontWithName:@"Arial-BoldItalicMT" size:12.0];
+//    attLbl.textColor = [UIColor colorWithRed:140.0/255.0 green:140.0/255.0 blue:140.0/255.0 alpha:1.0];
+//    attLbl.textAlignment = NSTextAlignmentCenter;
+//    [statusView addSubview:attLbl];
+//    
+//    UILabel *aNumLbl = [[UILabel alloc] initWithFrame:CGRectMake( 178.0/640.0*VIEW_FRAME_WIDTH, 122.0/1136.0*VIEW_FRAME_HEIGHT, 28.0/640.0*VIEW_FRAME_WIDTH, 19.0/1136.0*VIEW_FRAME_HEIGHT)];
+//    aNumLbl.text = [self.dic objectForKey:@"focus"];
+//    aNumLbl.font = [UIFont fontWithName:@"Arial-BoldItalicMT" size:12.0];
+//    aNumLbl.textColor = [UIColor blackColor];
+//    aNumLbl.textAlignment = NSTextAlignmentCenter;
+//    [statusView addSubview:aNumLbl];
+//    
+//    [attLbl release];
+//    [aNumLbl release];
+//    
+//    UIButton *fotoBtn = [UIButton buttonWithType:UIButtonTypeSystem];
+//    fotoBtn.frame = CGRectMake( 300.0/640.0*VIEW_FRAME_WIDTH, 22.0/1136.0*VIEW_FRAME_HEIGHT, 40.0/640.0*VIEW_FRAME_WIDTH, 30.0/1136.0*VIEW_FRAME_HEIGHT);
+//    [fotoBtn setBackgroundImage:[UIImage imageNamed:@"photoicon.png"] forState:UIControlStateNormal];
+//    [fotoBtn addTarget:self action:@selector(goToFotoWall:) forControlEvents:UIControlEventTouchUpInside];
+//    [statusView addSubview:fotoBtn];
+//    
+//    UILabel *fotoLbl = [[UILabel alloc] initWithFrame:CGRectMake( 295.0/640.0*VIEW_FRAME_WIDTH, 75.0/1136.0*VIEW_FRAME_HEIGHT, 50.0/640.0*VIEW_FRAME_WIDTH, 24.0/1136.0*VIEW_FRAME_HEIGHT)];
+//    fotoLbl.text = @"相片";
+//    fotoLbl.font = [UIFont fontWithName:@"Arial-BoldItalicMT" size:12.0];
+//    fotoLbl.textColor = [UIColor colorWithRed:140.0/255.0 green:140.0/255.0 blue:140.0/255.0 alpha:1.0];
+//    fotoLbl.textAlignment = NSTextAlignmentCenter;
+//    [statusView addSubview:fotoLbl];
+//    
+//    UILabel *pNumLbl = [[UILabel alloc] initWithFrame:CGRectMake( 306.0/640.0*VIEW_FRAME_WIDTH, 122.0/1136.0*VIEW_FRAME_HEIGHT, 28.0/640.0*VIEW_FRAME_WIDTH, 19.0/1136.0*VIEW_FRAME_HEIGHT)];
+//    pNumLbl.text = @"90";
+//    pNumLbl.font = [UIFont fontWithName:@"Arial-BoldItalicMT" size:12.0];
+//    pNumLbl.textColor = [UIColor blackColor];
+//    pNumLbl.textAlignment = NSTextAlignmentCenter;
+//    [statusView addSubview:pNumLbl];
+//
+//    [fotoLbl release];
+//    [pNumLbl release];
+//    
+//    UIButton *blogBtn = [UIButton buttonWithType:UIButtonTypeSystem];
+//    blogBtn.frame = CGRectMake( 430.0/640.0*VIEW_FRAME_WIDTH, 15.0/1136.0*VIEW_FRAME_HEIGHT, 32.0/640.0*VIEW_FRAME_WIDTH, 40.0/1136.0*VIEW_FRAME_HEIGHT);
+//    [blogBtn setBackgroundImage:[UIImage imageNamed:@"post_icon.png"] forState:UIControlStateNormal];
+//    [statusView addSubview:blogBtn];
+//    
+//    UILabel *blogLbl = [[UILabel alloc] initWithFrame:CGRectMake( 423.0/640.0*VIEW_FRAME_WIDTH, 75.0/1136.0*VIEW_FRAME_HEIGHT, 50.0/640.0*VIEW_FRAME_WIDTH, 24.0/1136.0*VIEW_FRAME_HEIGHT)];
+//    blogLbl.text = @"帖子";
+//    blogLbl.font = [UIFont fontWithName:@"Arial-BoldItalicMT" size:12.0];
+//    blogLbl.textColor = [UIColor colorWithRed:140.0/255.0 green:140.0/255.0 blue:140.0/255.0 alpha:1.0];
+//    blogLbl.textAlignment = NSTextAlignmentCenter;
+//    [statusView addSubview:blogLbl];
+//    
+//    UILabel *bNumLbl = [[UILabel alloc] initWithFrame:CGRectMake( 434.0/640.0*VIEW_FRAME_WIDTH, 122.0/1136.0*VIEW_FRAME_HEIGHT, 28.0/640.0*VIEW_FRAME_WIDTH, 19.0/1136.0*VIEW_FRAME_HEIGHT)];
+//    bNumLbl.text = [self.dic objectForKey:@"postNum"];
+//    bNumLbl.font = [UIFont fontWithName:@"Arial-BoldItalicMT" size:12.0];
+//    bNumLbl.textColor = [UIColor blackColor];
+//    bNumLbl.textAlignment = NSTextAlignmentCenter;
+//    [statusView addSubview:bNumLbl];
+//    
+//    [blogLbl release];
+//    [bNumLbl release];
+//    
+//    UIButton *collBtn = [UIButton buttonWithType:UIButtonTypeSystem];
+//    collBtn.frame = CGRectMake( 554.0/640.0*VIEW_FRAME_WIDTH, 16.0/1136.0*VIEW_FRAME_HEIGHT, 44.0/640.0*VIEW_FRAME_WIDTH, 42.0/1136.0*VIEW_FRAME_HEIGHT);
+//    [collBtn setBackgroundImage:[UIImage imageNamed:@"collection.png"] forState:UIControlStateNormal];
+//    [collBtn addTarget:self action:@selector(goToCollectedSection:) forControlEvents:UIControlEventTouchUpInside];
+//    [statusView addSubview:collBtn];
+//    
+//    UILabel *collLbl = [[UILabel alloc] initWithFrame:CGRectMake( 551.0/640.0*VIEW_FRAME_WIDTH, 75.0/1136.0*VIEW_FRAME_HEIGHT, 50.0/640.0*VIEW_FRAME_WIDTH, 24.0/1136.0*VIEW_FRAME_HEIGHT)];
+//    collLbl.text = @"收藏";
+//    collLbl.font = [UIFont fontWithName:@"Arial-BoldItalicMT" size:12.0];
+//    collLbl.textColor = [UIColor colorWithRed:140.0/255.0 green:140.0/255.0 blue:140.0/255.0 alpha:1.0];
+//    collLbl.textAlignment = NSTextAlignmentCenter;
+//    [statusView addSubview:collLbl];
+//    
+//    UILabel *cNumLbl = [[UILabel alloc] initWithFrame:CGRectMake( 562.0/640.0*VIEW_FRAME_WIDTH, 122.0/1136.0*VIEW_FRAME_HEIGHT, 28.0/640.0*VIEW_FRAME_WIDTH, 19.0/1136.0*VIEW_FRAME_HEIGHT)];
+//    cNumLbl.text = [self.dic objectForKey:@"collectNum"];
+//    cNumLbl.font = [UIFont fontWithName:@"Arial-BoldItalicMT" size:12.0];
+//    cNumLbl.textColor = [UIColor blackColor];
+//    cNumLbl.textAlignment = NSTextAlignmentCenter;
+//    [statusView addSubview:cNumLbl];
+//  
+//    [collLbl release];
+//    [cNumLbl release];
+//
+//    [statusView release];
+//    
+//    UILabel *mengLbl = [[UILabel alloc] initWithFrame:CGRectMake( 264.0/640.0*VIEW_FRAME_WIDTH, 909.0/1136.0*VIEW_FRAME_HEIGHT, 118.0/640.0*VIEW_FRAME_WIDTH, 30.0/1136.0*VIEW_FRAME_HEIGHT)];
+//    mengLbl.text = @"萌宠卖萌";
+//    mengLbl.font = [UIFont fontWithName:@"Arial-BoldItalicMT" size:14.0];
+//    mengLbl.textColor = [UIColor colorWithRed:255.0/255.0 green:132.0/255.0 blue:144.0/255.0 alpha:1.0];
+//    mengLbl.textAlignment = NSTextAlignmentCenter;
+//    [self.view addSubview:mengLbl];
+//    
+//    DottedLine *dl = [[DottedLine alloc] initWithFrame:CGRectMake( 10.0/640.0*VIEW_FRAME_WIDTH, 924.0/1136.0*VIEW_FRAME_HEIGHT, 244.0/640.0*VIEW_FRAME_WIDTH, 2.0/1136.0*VIEW_FRAME_HEIGHT)];
+//    [dl setBackgroundColor:[UIColor colorWithRed:200.0/255.0 green:200.0/255.0 blue:200.0/255.0 alpha:1.0]];
+//    [self.view addSubview:dl];
+//    
+//    DottedLine *dll = [[DottedLine alloc] initWithFrame:CGRectMake( 392.0/640.0*VIEW_FRAME_WIDTH, 924.0/1136.0*VIEW_FRAME_HEIGHT, 235.0/640.0*VIEW_FRAME_WIDTH, 2.0/1136.0*VIEW_FRAME_HEIGHT)];
+//    [dll setBackgroundColor:[UIColor colorWithRed:200.0/255.0 green:200.0/255.0 blue:200.0/255.0 alpha:1.0]];
+//    [self.view addSubview:dll];
+//    
+//    self.svImg = [[UIScrollView alloc] initWithFrame:CGRectMake( 20.0/640.0*VIEW_FRAME_WIDTH, 970.0/1136.0*VIEW_FRAME_HEIGHT, 582.0/640.0*VIEW_FRAME_WIDTH, 136.0/1136.0*VIEW_FRAME_HEIGHT)];
+//    svImg.delegate = self;
+//    svImg.showsHorizontalScrollIndicator = NO;
+//    svImg.showsVerticalScrollIndicator = NO;
+//
+//    svImg.contentSize = CGSizeMake(VIEW_FRAME_WIDTH*3, 136.0/1136.0*VIEW_FRAME_HEIGHT); //3改成[arry count]/4
+//    svImg.tag = 11;
+//    svImg.pagingEnabled = YES;
+//    svImg.bounces = NO;
+//    [self.view addSubview:svImg];
+//    
+//    svImgCurrentPage = 1;
+//    
+////    self.pc = [[UIPageControl alloc] initWithFrame:CGRectMake( 264.0/640.0*VIEW_FRAME_WIDTH, 650.0/1136.0*VIEW_FRAME_HEIGHT-128.0/1136.0*VIEW_FRAME_HEIGHT,108.0/640.0*VIEW_FRAME_WIDTH, 2.0/1136.0*VIEW_FRAME_HEIGHT)];
+////    pc.numberOfPages = 3;
+////    pc.currentPage = 0;
+////    [pc addTarget:self action:@selector(pageTurn:) forControlEvents:UIControlEventValueChanged];  //用户点击UIPageControl的响应函数
+////    [self.view addSubview:pc];
+//    
+//    for (int k = 0; k < 12; k ++) {
+//        UIImageView *pImg = [[UIImageView alloc] initWithFrame:CGRectMake( 146.0/640.0*VIEW_FRAME_WIDTH*k, 0.0/1136.0*VIEW_FRAME_HEIGHT, 136.0/640.0*VIEW_FRAME_WIDTH, 136.0/1136.0*VIEW_FRAME_HEIGHT)];
+//        [pImg setBackgroundColor:[UIColor colorWithRed:200.0/255.0 green:200.0/255.0 blue:200.0/255.0 alpha:1.0]];
+//        [svImg addSubview:pImg];
+//        
+//        [pImg release];
+//
+//    }
+//    
+//    UIButton *turnBtn = [UIButton buttonWithType:UIButtonTypeSystem];
+//    turnBtn.frame = CGRectMake( 611.0/640.0*VIEW_FRAME_WIDTH, 1032.0/1136.0*VIEW_FRAME_HEIGHT, 16.0/640.0*VIEW_FRAME_WIDTH, 28.0/1136.0*VIEW_FRAME_HEIGHT);
+//    [turnBtn setBackgroundImage:[UIImage imageNamed:@"right_arrow.png"] forState:UIControlStateNormal];
+//    [turnBtn addTarget:self action:@selector(scrollViewMove:) forControlEvents:UIControlEventTouchUpInside];
+//    [self.view addSubview:turnBtn];
+}
+
+- (void)didReceiveMemoryWarning
+{
+    [super didReceiveMemoryWarning];
+    // Dispose of any resources that can be recreated.
+}
+
+-(void)frashView:(NSNotification *)noti
+{
+    [self.per setNeedsDisplay];
+}
+
+- (void)setValue:(NSMutableDictionary *)value
+{
+    self.dic = [NSMutableDictionary dictionaryWithDictionary:value];
+    
+    NSLog(@"setvalue:::::%@",self.dic);
+    
+//    self.per = [[PersonalInfoView alloc] initWithFrame:CGRectMake(0, 0, VIEW_FRAME_WIDTH, VIEW_FRAME_HEIGHT)];
+    
+    self.per.dic = [NSMutableDictionary dictionaryWithDictionary:self.dic];
+    
+//    NSLog(@"per.dic 初始化");
+//    
+//    [self.view addSubview:per];
+//    [per autorelease];
+    
+    
+    
+    NSLog(@"======%@",self.per.dic);
+    
+    [self.per setNeedsDisplay];
+}
+
+//-(void)scrollViewMove:(UIButton *)btn
+//{
+//    svImgCurrentPage ++;
+//    
+//    //令UIScrollView做出相应的滑动显示
+//    CGSize viewSize = svImg.frame.size;
+//    CGRect rect = CGRectMake(svImgCurrentPage * viewSize.width, 0, viewSize.width, viewSize.height);
+//    [svImg scrollRectToVisible:rect animated:YES];
+//    
+//    
+//    
+//    if (svImgCurrentPage == 12/4) {
+//        svImgCurrentPage = 0;
+//    }
+//
+//}
+
+-(void)backToCon:(UIButton *)btn
+{
+    if (isFromPost) {
+        PostViewController *posts = [[PostViewController alloc] init];
+        posts.titleName = self.starName;
+        posts.moderatorsId = self.starIndex;
+        [self presentViewController:posts animated:NO completion:nil];
+        [posts release];
+    }if ([whereFrom isEqualToString:@"fans"]) {
+        FansViewController *fans = [[FansViewController alloc] init];
+        [self presentViewController:fans animated:NO completion:nil];
+        [fans release];
+    }if ([whereFrom isEqualToString:@"focus"]) {
+        AttentionViewController *att = [[AttentionViewController alloc] init];
+        [self presentViewController:att animated:NO completion:nil];
+        [att release];
+    }else{
+        ContentViewController *content = [[ContentViewController alloc] init];
+        content.starName = self.starName;
+        content.starIndex = self.starIndex;
+        content.petNameTxt = self.userName;
+        content.image = self.imageUrl;
+        content.petSex = self.sexIndex;
+        content.image = self.imageUrl;
+        content.content = self.contentTxt;
+        content.usrPortrait = self.usrPortrait;
+        content.petPortrait = self.petPortrait;
+        content.breed = self.breed;
+        [self presentViewController:content animated:NO completion:nil];
+        [content release];
+    }
+}
+
+//- (void)scrollViewDidScroll:(UIScrollView *)scrollView
+//{
+//    if (scrollView.tag == 10) {
+//        
+////        CGPoint offset = scrollView.contentOffset;
+////        CGRect bounds = CGRectMake(0, 0, 344.0/640.0*VIEW_FRAME_WIDTH, 170.0/1136.0*VIEW_FRAME_HEIGHT);
+////        [pc setCurrentPage:offset.x / bounds.size.width];
+//
+//    }else if (scrollView.tag == 11){
+//        
+//        //Selected index's color changed.
+//        static float newx = 0;
+//        static float oldx = 0;
+//        newx= scrollView.contentOffset.x ;
+//        if (newx != oldx ) {
+//            //Left-YES,Right-NO
+//            if (newx > oldx) {
+//                self.scrollLeftOrRight = NO;
+//            }else if(newx < oldx){
+//                self.scrollLeftOrRight = YES;
+//            }
+//            oldx = newx;
+//        }
+//    }
+//    
+////    appDelegate=[[UIApplication sharedApplication] delegate];
+////    City *c = [appDelegate.cities objectAtIndex:pc.currentPage];
+////    self.cName = c.cityName;
+//}
+//
+//- (void)scrollViewDidEndDragging:(UIScrollView *)scrollView willDecelerate:(BOOL)decelerate
+//{
+//    if (!self.scrollLeftOrRight) {
+//        svImgCurrentPage ++;
+//        if (svImgCurrentPage == 12/4) {
+//            svImgCurrentPage = 0;
+//        }
+//    }else{
+//        if (svImgCurrentPage == 0) {
+//            svImgCurrentPage = 12/4;
+//        }
+//        svImgCurrentPage --;
+//    }
+//}
+
+-(void)goToCollectedSection:(UIButton *)btn
+{
+//    CollectedSectionViewController *colSec = [[CollectedSectionViewController alloc] init];
+//    colSec.userId = self.userId;
+//    colSec.starName = self.starName;
+//    colSec.starIndex = self.starIndex;
+//    [self presentViewController:colSec animated:NO completion:nil];
+//    [colSec release];
+}
+
+-(void)goToAttentionSection:(UIButton *)btn
+{
+//    AttentionViewController *avc = [[AttentionViewController alloc] init];
+//    avc.userId = self.userId;
+//    avc.starName = self.starName;
+//    avc.starIndex = self.starIndex;
+//    [self presentViewController:avc animated:NO completion:nil];
+//    [avc release];
+}
+
+-(void)goToPos:(UIButton *)btn
+{
+//    PersonalPostViewController *personalPost = [[PersonalPostViewController alloc] init];
+//    personalPost.userId = self.userId;
+//    personalPost.starName = self.starName;
+//    personalPost.starIndex = self.starIndex;
+//    personalPost.userName = self.userName;
+//    [self presentViewController:personalPost animated:NO completion:nil];
+//    [personalPost release];
+}
+
+-(void)goToFansSection:(UIButton *)btn
+{
+//    FansViewController *fans = [[FansViewController alloc] init];
+//    fans.userId = self.userId;
+//    fans.starName = self.starName;
+//    fans.starIndex = self.starIndex;
+//    [self presentViewController:fans animated:NO completion:nil];
+//    [fans release];
+}
+
+-(void)goToFotoWall:(UIButton *)btn
+{
+//    FotoWallViewController *foto = [[FotoWallViewController alloc] init];
+//    foto.userId = self.userId;
+//    foto.starName = self.starName;
+//    foto.starIndex = self.starIndex;
+//    [self presentViewController:foto animated:NO completion:nil];
+//    [foto release];
+}
+
+//-(void)focus: (UIButton *)btn
+//{
+//    PostFocus *pf = [[PostFocus alloc] init];
+//    [pf postFocus:self.userId];
+//    [pf release];
+//    
+//    UIAlertView *alert = [[UIAlertView alloc] initWithTitle:@"关注成功！" message:nil delegate:self cancelButtonTitle:@"确认" otherButtonTitles:nil];
+//    [alert show];
+//    [alert release];
+//}
+
+-(void)dealloc
+{
+    [[NSNotificationCenter defaultCenter]removeObserver:@"GOFAN"];
+    [[NSNotificationCenter defaultCenter]removeObserver:@"GOATT"];
+    [[NSNotificationCenter defaultCenter]removeObserver:@"GOFOT"];
+    [[NSNotificationCenter defaultCenter]removeObserver:@"GOCOL"];
+    
+    [sv release];
+    [starName release];
+    [svImg release];
+    [pc release];
+    [dic release];
+    [pNameLbl release];
+    [userName release];
+    [imageUrl release];
+    [contentTxt release];
+    [race release];
+    [whereFrom release];
+    [usrPortrait release];
+    [petPortrait release];
+    [breed release];
+    [super dealloc];
+    
+}
+
+/*
+#pragma mark - Navigation
+
+// In a storyboard-based application, you will often want to do a little preparation before navigation
+- (void)prepareForSegue:(UIStoryboardSegue *)segue sender:(id)sender
+{
+    // Get the new view controller using [segue destinationViewController].
+    // Pass the selected object to the new view controller.
+}
+*/
+
+@end

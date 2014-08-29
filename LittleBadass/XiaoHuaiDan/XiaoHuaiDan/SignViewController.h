@@ -1,0 +1,41 @@
+//
+//  SignViewController.h
+//  XiaoHuaiDan
+//
+//  Created by WongSuwy on 2014/6/29.
+//  Copyright (c) 2014年 sch. All rights reserved.
+//
+
+#import "ViewController.h"
+#import "CityPickerView.h"
+#import "PetFamily.h"
+@interface SignViewController : ViewController<UITextFieldDelegate,UIImagePickerControllerDelegate,UINavigationControllerDelegate,updateLabel>
+{
+    PetFamily * pets;
+}
+@property (nonatomic,retain) UIButton *sexChooseBtn;
+@property (nonatomic,retain) UIButton *petSexChooseBtn;
+@property (nonatomic,retain) UIButton *varChooseBtn;
+//@property (nonatomic,retain) UIView *backImg;
+@property (nonatomic,retain) UIButton *petBirthChooseBtn;
+@property (nonatomic,retain) UIDatePicker *pick;
+@property (nonatomic,retain) UITextField *nameTxt;
+@property (nonatomic,retain) UITextField *petNameTxt;
+
+@property (nonatomic,retain) UIButton *disChooseBtn;
+@property (nonatomic,retain) UIButton *peoBtn;
+@property (nonatomic,retain) UIButton *petBtn;
+@property (nonatomic, strong) CityPickerView *cityPick;
+
+@property (nonatomic,retain) NSString *distrString;
+@property (nonatomic,retain) NSString *usrName;
+@property (nonatomic,assign) int sexIndex;
+
+@property (nonatomic,retain) NSString *petName;
+@property (nonatomic,retain) NSString *birthday;
+@property (nonatomic,assign) int petSexIndex;
+@property (nonatomic,retain) NSString *breed;
+@property (nonatomic,retain) NSString *race;
+@property (nonatomic,retain) NSData *petPortrait;
+@property (nonatomic,retain) NSString *selectedRace;
+@end

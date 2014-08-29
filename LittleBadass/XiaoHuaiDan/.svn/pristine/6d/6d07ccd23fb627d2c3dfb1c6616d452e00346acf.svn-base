@@ -1,0 +1,289 @@
+//
+//  MainViewController.m
+//  XiaoHuaiDan
+//
+//  Created by TCL on 14-5-14.
+//  Copyright (c) 2014年 sch. All rights reserved.
+//
+
+#import "MainViewController.h"
+#import "ViewController.h"
+#import "FotoWallViewController.h"
+#import "LoginViewController.h"
+#import "GetEssencePost.h"
+#import "GetMederatorPost.h"
+#import "PersonalPostViewController.h"
+#import "FansViewController.h"
+#import "AttentionViewController.h"
+#import "CollectedSectionViewController.h"
+#import "SettingViewController.h"
+#import "PetViewController.h"
+#import "PostUserPortrait.h"
+
+
+@interface MainViewController ()
+
+@end
+
+@implementation MainViewController
+@synthesize footView,imgview,main,per,mainpageBtn,lbsBtn,userBtn,map;
+
+- (id)initWithNibName:(NSString *)nibNameOrNil bundle:(NSBundle *)nibBundleOrNil
+{
+    self = [super initWithNibName:nibNameOrNil bundle:nibBundleOrNil];
+    if (self) {
+        // Custom initialization
+    }
+    return self;
+}
+
+- (void)viewDidLoad
+{
+    [super viewDidLoad];
+    // Do any additional setup after loading the view.
+    
+    self.main = [[MainPageView alloc] initWithFrame:CGRectMake(0, 0, VIEW_FRAME_WIDTH, VIEW_FRAME_HEIGHT)];
+    [self.view addSubview:main];
+    [main release];
+    
+    NSLog(@"----mainpage");
+    
+    self.footView = [[UIImageView alloc] initWithImage:[UIImage imageNamed:@"red.png"]];
+    self.footView.frame = CGRectMake(0, 524.0/568.0*VIEW_FRAME_HEIGHT,VIEW_FRAME_WIDTH, 52.0/568.0*VIEW_FRAME_HEIGHT);
+    [self.footView setUserInteractionEnabled:YES];
+    [self.view addSubview:self.footView];
+    
+    self.mainpageBtn = [UIButton buttonWithType:UIButtonTypeSystem];
+    mainpageBtn.frame = CGRectMake(90.0/320.0*VIEW_FRAME_WIDTH, 10/568.0*VIEW_FRAME_HEIGHT, 46.0/640.0*VIEW_FRAME_WIDTH, 44.0/1136.0*VIEW_FRAME_HEIGHT);
+    [mainpageBtn setBackgroundImage:[UIImage imageNamed:@"homepage_press.png"] forState:UIControlStateNormal];
+    [mainpageBtn addTarget:self action:@selector(showMainPage:) forControlEvents:UIControlEventTouchUpInside];
+    [self.footView addSubview:mainpageBtn];
+    
+    self.lbsBtn = [UIButton buttonWithType:UIButtonTypeSystem];
+    lbsBtn.frame = CGRectMake(145.0/320.0*VIEW_FRAME_WIDTH, 10.0/568.0*VIEW_FRAME_HEIGHT, 40.0/640.0*VIEW_FRAME_WIDTH, 47.0/1136.0*VIEW_FRAME_HEIGHT);
+    [lbsBtn setBackgroundImage:[UIImage imageNamed:@"location_noimal.png"] forState:UIControlStateNormal];
+    [lbsBtn addTarget:self action:@selector(showLBS:) forControlEvents:UIControlEventTouchUpInside];
+    [self.footView addSubview:lbsBtn];
+    //http://blog.csdn.net/orietech/article/details/6645717   自定义大头针view
+    
+    self.userBtn = [UIButton buttonWithType:UIButtonTypeSystem];
+    userBtn.frame = CGRectMake(200.0/320.0*VIEW_FRAME_WIDTH, 10.0/568.0*VIEW_FRAME_HEIGHT, 40.0/640.0*VIEW_FRAME_WIDTH, 45.0/1136.0*VIEW_FRAME_HEIGHT);
+    [userBtn setBackgroundImage:[UIImage imageNamed:@"gata_normal.png"] forState:UIControlStateNormal];
+    [userBtn addTarget:self action:@selector(showPersonalCenter:) forControlEvents:UIControlEventTouchUpInside];
+    [self.footView addSubview:userBtn];
+    
+    [footView release];
+        
+    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(goToOtherPage:) name:@"GOTO" object:nil];
+    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(footViewHide:) name:@"FOOTHIDEORNOT" object:nil];
+    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(goToSection:) name:@"SECTIONCHOOSE" object:nil];
+    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(getPost:) name:@"GOTPOST"  object:nil];
+    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(addPet:) name:@"ADDPET"  object:nil];
+    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(editPet:) name:@"EDITPET"  object:nil];
+    
+    NSLog(@"path:%@",NSHomeDirectory());
+//测试上传图片
+//    PostUserPortrait *kk = [[PostUserPortrait alloc] init];
+//    PostPetPortrait *ppp = [[PostPetPortrait alloc] init];
+//    [kk postUserPortrait: [NSString stringWithFormat:@"%@/qqlogo.png",NSHomeDirectory()]];
+//    [ppp postPetPortrait:[NSString stringWithFormat:@"%@/qqlogo.png",NSHomeDirectory()] PetId:1];
+}
+
+- (void)didReceiveMemoryWarning
+{
+    [super didReceiveMemoryWarning];
+    // Dispose of any resources that can be recreated.
+}
+
+-(void)goToOtherPage : (NSNotification *)noti
+{
+    NSLog(@"-----%@",[noti object]);
+    
+//    GetMederatorPost *gmp = [[GetMederatorPost alloc] init];
+    
+    PostViewController *pvc = [[PostViewController alloc] init];
+    
+    if ([[noti object] isEqualToString:@"0"]) {
+        
+        pvc.titleName = @"爆照星";
+        pvc.moderatorsId = 1;
+        
+    }else if([[noti object] isEqualToString:@"1"]){
+        
+        pvc.titleName = @"喵喵星";
+        pvc.moderatorsId = 2;
+        
+    }else if([[noti object] isEqualToString:@"2"]){
+        
+        pvc.titleName = @"吐槽星";
+        pvc.moderatorsId = 3;
+        
+    }else if([[noti object] isEqualToString:@"3"]){
+        
+        pvc.titleName = @"汪汪星";
+        pvc.moderatorsId = 4;
+        
+    }else{
+        
+        pvc.titleName = @"收养星";
+        pvc.moderatorsId = 5;
+        
+    }
+    
+//    [gmp getMederatorPost];
+    
+    [self presentViewController:pvc animated:YES completion:nil];
+    [pvc release];
+    
+}
+
+-(void)footViewHide:(NSNotification *)noti
+{
+    if ([[noti object]isEqualToString:@"YES"]) {
+        [self.footView setHidden:YES];
+    }else
+        [self.footView setHidden:NO];
+    
+}
+
+-(void)showMainPage:(UIButton *)btn
+{
+    [btn setBackgroundImage:[UIImage imageNamed:@"homepage_press.png"] forState:UIControlStateNormal];
+    [lbsBtn setBackgroundImage:[UIImage imageNamed:@"location_noimal.png"] forState:UIControlStateNormal];
+    [userBtn setBackgroundImage:[UIImage imageNamed:@"gata_normal.png"] forState:UIControlStateNormal];
+    self.main = [[MainPageView alloc] initWithFrame:CGRectMake(0, 0, VIEW_FRAME_WIDTH, VIEW_FRAME_HEIGHT)];
+    
+    [map removeFromSuperview];
+    [self.per removeFromSuperview];
+    [self.footView removeFromSuperview];
+    [self.view addSubview:main];
+    [self.view addSubview:self.footView];
+    
+    [main release];
+}
+
+-(void)showLBS:(UIButton *)btn
+{
+    [mainpageBtn setBackgroundImage:[UIImage imageNamed:@"homepage_normal.png"] forState:UIControlStateNormal];
+    [lbsBtn setBackgroundImage:[UIImage imageNamed:@"location_press.png"] forState:UIControlStateNormal];
+    [userBtn setBackgroundImage:[UIImage imageNamed:@"gata_normal.png"] forState:UIControlStateNormal];
+    self.map = [[MapView alloc] initWithFrame:CGRectMake(0, 0, VIEW_FRAME_WIDTH, VIEW_FRAME_HEIGHT)];
+    
+    [self.per removeFromSuperview];
+    [self.main removeFromSuperview];
+    [self.footView removeFromSuperview];
+    [self.view addSubview:map];
+    [self.view addSubview:self.footView];
+    [map release];
+}
+
+-(void)showPersonalCenter:(UIButton *)btn
+{
+    [userBtn setBackgroundImage:[UIImage imageNamed:@"gata_press.png"] forState:UIControlStateNormal];
+    [lbsBtn setBackgroundImage:[UIImage imageNamed:@"location_noimal.png"] forState:UIControlStateNormal];
+    [mainpageBtn setBackgroundImage:[UIImage imageNamed:@"homepage_normal.png"] forState:UIControlStateNormal];
+    self.per = [[PersonalCenterView alloc] initWithFrame:CGRectMake(0, 0, VIEW_FRAME_WIDTH, VIEW_FRAME_HEIGHT)];
+    [self.main removeFromSuperview];
+    [self.footView removeFromSuperview];
+    [self.view addSubview:per];
+    [self.view addSubview:self.footView];
+    [per release];
+    
+    
+}
+
+-(void)goToSection:(NSNotification *)noti
+{
+    if ([[noti object]isEqualToString:@"0"]) {
+        PersonalPostViewController *ppvc = [[PersonalPostViewController alloc] init];
+        ppvc.isFromeMainPage = YES;
+        [self presentViewController:ppvc animated:NO completion:nil];
+        [ppvc release];
+    }
+    if ([[noti object]isEqualToString:@"1"]) {
+        FansViewController *fans = [[FansViewController alloc] init];
+        fans.isFromeMainPage = YES;
+        [self presentViewController:fans animated:NO completion:nil];
+        [fans release];
+    }
+    if ([[noti object]isEqualToString:@"2"]) {
+        AttentionViewController *att = [[AttentionViewController alloc] init];
+        att.isFromeMainPage = YES;
+        [self presentViewController:att animated:NO completion:nil];
+        [att release];
+    }
+    if ([[noti object]isEqualToString:@"3"]) {
+        FotoWallViewController *foto = [[FotoWallViewController alloc] init];
+        foto.isFromeMainPage = YES;
+        [self presentViewController:foto animated:NO completion:nil];
+        [foto release];
+    }
+    if ([[noti object]isEqualToString:@"4"]) {
+        CollectedSectionViewController *coll = [[CollectedSectionViewController alloc] init];
+        coll.isFromeMainPage = YES;
+        [self presentViewController:coll animated:NO completion:nil];
+        [coll release];
+    }
+    if ([[noti object]isEqualToString:@"5"]) {
+        SettingViewController *set = [[SettingViewController alloc] init];
+//        coll.isFromeMainPage = YES;
+        [self presentViewController:set animated:NO completion:nil];
+        [set release];
+    }
+}
+
+-(void)addPet:(NSNotification *)noti
+{
+    PetViewController *addPet = [[PetViewController alloc] init];
+    [self presentViewController:addPet animated:YES completion:nil];
+    [addPet release];
+}
+
+-(void)editPet:(NSNotification *)noti
+{
+    
+    PetViewController *editPet = [[PetViewController alloc] init];
+    editPet.portrait = [[noti object] objectForKey:@"portrait"];
+    editPet.petName = [[noti object] objectForKey:@"name"];
+    editPet.sexIndex = [[[noti object] objectForKey:@"sex"] intValue];
+//    editPet.selectedRace = [[noti object] objectForKey:@"race"];
+    editPet.selectedBreed = [[noti object] objectForKey:@"breed"];
+    editPet.birthday = [[noti object] objectForKey:@"birthday"];
+    editPet.isEdit = YES;
+    [self presentViewController:editPet animated:YES completion:nil];
+    [editPet release];
+}
+
+-(void)getPost:(NSNotification *)noti
+{
+    self.main.postDic = [NSMutableDictionary dictionaryWithDictionary:[noti object]];
+}
+
+-(void)dealloc
+{
+    [map release];
+    [footView release];
+    [per release];
+    [main release];
+    [[NSNotificationCenter defaultCenter] removeObserver:self name:@"GOTO" object:nil];
+    [[NSNotificationCenter defaultCenter] removeObserver:self name:@"FOOTHIDEORNOT" object:nil];
+    [[NSNotificationCenter defaultCenter] removeObserver:self name:@"GOTPOST" object:nil];
+    [[NSNotificationCenter defaultCenter] removeObserver:self name:@"SECTIONCHOOSE" object:nil];
+    [[NSNotificationCenter defaultCenter] removeObserver:self name:@"ADDPET" object:nil];
+    [[NSNotificationCenter defaultCenter] removeObserver:self name:@"DELETEPET" object:nil];
+    [super dealloc];
+    
+}
+
+/*
+#pragma mark - Navigation
+
+// In a storyboard-based application, you will often want to do a little preparation before navigation
+- (void)prepareForSegue:(UIStoryboardSegue *)segue sender:(id)sender
+{
+    // Get the new view controller using [segue destinationViewController].
+    // Pass the selected object to the new view controller.
+}
+*/
+
+@end

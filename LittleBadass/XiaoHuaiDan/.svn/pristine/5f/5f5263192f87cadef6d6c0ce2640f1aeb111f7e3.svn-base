@@ -1,0 +1,20 @@
+//
+//  PersonalCenterView.h
+//  XiaoHuaiDan
+//
+//  Created by WongSuwy on 2014/6/28.
+//  Copyright (c) 2014年 sch. All rights reserved.
+//
+
+#import <UIKit/UIKit.h>
+#import "PostPetData.h"
+
+@interface PersonalCenterView : UIView<UIScrollViewDelegate,UITableViewDataSource,UITableViewDelegate,RefreshUserCentrerDelegate>
+
+
+@property (nonatomic,retain) NSMutableDictionary *userInfoDic;
+@property (nonatomic,retain) UIScrollView *sv;
+//@property (nonatomic,retain) UIScrollView *svImg;
+@property (nonatomic,retain) NSMutableArray *petsArr;
+
+@end

@@ -1,0 +1,34 @@
+//
+//  MainPageView.h
+//  XiaoHuaiDan
+//
+//  Created by WongSuwy on 2014/6/28.
+//  Copyright (c) 2014年 sch. All rights reserved.
+//
+
+#import <UIKit/UIKit.h>
+#import "MainPageCell.h"
+#import "ViewController.h"
+#import "FirstTableViewCell.h"
+
+@interface MainPageView : UIView<UITableViewDataSource,UITableViewDelegate>
+@property (nonatomic,retain) FirstTableViewCell *fc;
+@property (nonatomic,retain) MainPageCell *mpc;
+@property (nonatomic,retain) NSDictionary *postDic;
+@property (nonatomic,retain) UITableView *table;
+
+@property (nonatomic,retain) NSMutableArray *customerIdArray;
+@property (nonatomic,retain) NSMutableArray *customerNameArray;
+@property (nonatomic,retain) NSMutableArray *customerPortraitArray;
+@property (nonatomic,retain) NSMutableArray *titleArray;
+@property (nonatomic,retain) NSMutableArray *contentArray;
+@property (nonatomic,retain) NSMutableArray *praiseNumArray;
+@property (nonatomic,retain) NSMutableArray *collectNumArray;
+@property (nonatomic,retain) NSMutableArray *totalArray;
+@property (nonatomic,retain) NSMutableArray *moderatorsIdArray;
+@property (nonatomic,retain) NSMutableDictionary *dic;
+
+@property (nonatomic,assign) int requestTimes;
+@property (nonatomic,assign) BOOL isLoading;
+
+@end
